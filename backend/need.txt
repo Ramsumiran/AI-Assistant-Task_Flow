@@ -1,0 +1,65 @@
+Yes, and that's actually the **correct way** to build the project.
+
+Algorithms should **not** be added just for demonstration. They should solve a real problem in the project. That makes your project more practical and helps you explain why each algorithm was chosen.
+
+Here's how we'll use them:
+
+| Project Feature                 | Algorithm                             | Why it fits                                                       |
+| ------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
+| Search task by ID or title      | Linear Search                         | Good for small lists and unsorted data loaded into memory.        |
+| Search task by ID after sorting | Binary Search                         | Faster than linear search on sorted data.                         |
+| Sort tasks by priority          | Insertion Sort                        | Efficient for small datasets where users add tasks one at a time. |
+| Sort tasks by due date          | Selection Sort                        | Easy to understand and implement for beginners.                   |
+| Sort tasks alphabetically       | Bubble Sort                           | Educational algorithm to demonstrate adjacent swaps.              |
+| Login                           | Password Hashing + JWT Authentication | Secure authentication instead of plain-text passwords.            |
+| Store users, projects, tasks    | SQLAlchemy ORM                        | Maps Python classes to Supabase database tables.                  |
+| Find a user's projects          | SQLAlchemy Relationships              | Retrieves related data without manual SQL joins.                  |
+
+For example, when the user clicks **"Sort by Priority"**, we won't call `sorted()` directly. We'll implement **Insertion Sort** and use it there.
+
+genui{"computing_fundamentals_algorithms":{"type_id":"INSERTION_SORT"}}
+
+Similarly, if the user chooses **"Search Task by ID"**, we'll first sort the tasks by ID and then apply **Binary Search** (we'll implement the algorithm ourselves, since there isn't a widget available for binary search).
+
+The project flow will look like this:
+
+```text
+User Request
+      │
+      ▼
+FastAPI Endpoint
+      │
+      ▼
+Authentication (JWT)
+      │
+      ▼
+SQLAlchemy ORM
+      │
+      ▼
+Supabase Database
+      │
+      ▼
+If searching → Linear Search / Binary Search
+If sorting → Insertion Sort / Selection Sort / Bubble Sort
+      │
+      ▼
+Return Response
+```
+
+### This is the plan I'll follow
+
+* ✅ Supabase PostgreSQL
+* ✅ SQLAlchemy ORM
+* ✅ FastAPI
+* ✅ JWT Authentication
+* ✅ Password Hashing
+* ✅ CRUD Operations
+* ✅ Linear Search (used in the project)
+* ✅ Binary Search (used in the project)
+* ✅ Bubble Sort (used in the project)
+* ✅ Insertion Sort (used in the project)
+* ✅ Selection Sort (used in the project)
+* ✅ Proper error handling
+* ✅ Beginner-friendly code with a line-by-line explanation
+
+We won't add algorithms just to satisfy a requirement. **Every algorithm will be integrated into a real feature of the TaskFlow application**, so you can explain both the code and the reason for using that algorithm during your project presentation.
