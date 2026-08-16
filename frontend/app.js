@@ -16,7 +16,7 @@
 /* ============================================================
    1. CONFIGURATION
    ============================================================ */
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 
 /** Allowed email domains — mirrors backend validation */
 const ALLOWED_EMAIL_DOMAINS = ['gmail.com', 'outlook.com', 'yahoo.com', 'yahoomail.com'];
@@ -1526,42 +1526,92 @@ function initPublicHelpDesk() {
   });
 }
 
+// async function sendHelpdeskMessage(message) {
+//   const messages = document.getElementById('helpdesk-messages');
+//   const sendBtn  = document.getElementById('helpdesk-send-btn');
+//   if (!messages) return;
+
+//   // Append user bubble
+//   messages.appendChild(createChatBubble('user', message));
+//   scrollEl(messages);
+
+//   // Typing indicator
+//   const typingEl = createTypingIndicator();
+//   typingEl.id = 'helpdesk-typing';
+//   messages.appendChild(typingEl);
+//   scrollEl(messages);
+
+//   btnLoading(sendBtn, true);
+//   try {
+//     // /ai/chat is public — no token needed
+//     const savedToken = State.token;
+//     State.token = null;                          // temporarily strip auth header
+//     const data = await apiFetch('/ai/chat', {
+//       method: 'POST',
+//       body  : JSON.stringify({ message }),
+//     });
+//     State.token = savedToken;                    // restore
+//     typingEl.remove();
+//     messages.appendChild(createChatBubble('ai', data.response));
+//   } catch (err) {
+//     State.token = null; // already null path, but be safe
+//     typingEl.remove();
+//     messages.appendChild(createChatBubble('ai', `⚠ Sorry, something went wrong: ${err.message}`));
+//   } finally {
+//     btnLoading(sendBtn, false);
+//     scrollEl(messages);
+//   }
+// }
 async function sendHelpdeskMessage(message) {
   const messages = document.getElementById('helpdesk-messages');
-  const sendBtn  = document.getElementById('helpdesk-send-btn');
+  const sendBtn = document.getElementById('helpdesk-send-btn');
+
   if (!messages) return;
 
-  // Append user bubble
   messages.appendChild(createChatBubble('user', message));
   scrollEl(messages);
 
-  // Typing indicator
   const typingEl = createTypingIndicator();
   typingEl.id = 'helpdesk-typing';
   messages.appendChild(typingEl);
-  scrollEl(messages);
 
+  scrollEl(messages);
   btnLoading(sendBtn, true);
+
+  const savedToken = State.token;
+
   try {
-    // /ai/chat is public — no token needed
-    const savedToken = State.token;
-    State.token = null;                          // temporarily strip auth header
+    State.token = null;
+
     const data = await apiFetch('/ai/chat', {
       method: 'POST',
-      body  : JSON.stringify({ message }),
+      body: JSON.stringify({ message }),
     });
-    State.token = savedToken;                    // restore
+
     typingEl.remove();
-    messages.appendChild(createChatBubble('ai', data.response));
+    messages.appendChild(
+      createChatBubble('ai', data.response)
+    );
+
   } catch (err) {
-    State.token = null; // already null path, but be safe
     typingEl.remove();
-    messages.appendChild(createChatBubble('ai', `⚠ Sorry, something went wrong: ${err.message}`));
+
+    messages.appendChild(
+      createChatBubble(
+        'ai',
+        `⚠ Sorry, something went wrong: ${err.message}`
+      )
+    );
+
   } finally {
+    // Always restore the logged-in user's token
+    State.token = savedToken;
+
     btnLoading(sendBtn, false);
     scrollEl(messages);
   }
 }
+
 
 /** Generic scroll-to-bottom helper */
 function scrollEl(el) {
