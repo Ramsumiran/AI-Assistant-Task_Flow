@@ -335,6 +335,7 @@ def create_task(task: TaskCreate,
             description=task.description,
             priority=task.priority,
             due_date=task.due_date,
+            status=task.status,
             project_id=task.project_id
         )
 
@@ -553,6 +554,7 @@ def update_task(
         existing_task.description = task.description
         existing_task.priority = task.priority
         existing_task.due_date = task.due_date
+        existing_task.status = task.status
 
         db.commit()
         db.refresh(existing_task)

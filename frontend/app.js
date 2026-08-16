@@ -32,12 +32,13 @@ const State = {
   token        : null,
   user         : null,
   projects     : [],
-  currentProjectId : null,   // for project-detail view
+  currentProjectId : null,
   tasksPage    : 1,
   tasksLimit   : 10,
   tasksSort    : 'priority',
   tasksStatus  : '',
-  confirmCb    : null,       // pending confirm-delete callback
+  tasksPriority: '',         // filter by priority: 'High' | 'Medium' | 'Low' | ''
+  confirmCb    : null,
 };
 
 
@@ -373,7 +374,7 @@ function switchView(viewName) {
   // Trigger data loads
   if (viewName === 'dashboard')       loadDashboard();
   if (viewName === 'projects')        loadProjects();
-  if (viewName === 'tasks')           { State.tasksPage = 1; loadTasks(); }
+  if (viewName === 'tasks')           { State.tasksPage = 1; State.tasksPriority = ''; loadTasks(); }
 
   // Close sidebar on mobile
   document.getElementById('sidebar')?.classList.remove('open');
@@ -865,10 +866,10 @@ async function loadTasks() {
     const qs    = `?page=${State.tasksPage}&limit=${State.tasksLimit}&sort=${State.tasksSort}`;
     const tasks = await apiFetch(`/tasks${qs}`);
 
-    // Client-side status filter (backend doesn't support on /tasks globally)
-    const filtered = State.tasksStatus
-      ? tasks.filter(t => t.status === State.tasksStatus)
-      : tasks;
+    // Client-side filters
+    let filtered = tasks;
+    if (State.tasksStatus)   filtered = filtered.filter(t => t.status   === State.tasksStatus);
+    if (State.tasksPriority) filtered = filtered.filter(t => t.priority === State.tasksPriority);
 
     renderTasksTable(filtered);
     renderPagination(tasks.length);
@@ -962,6 +963,13 @@ function initTaskControls() {
   document.getElementById('filter-sort')?.addEventListener('change', (e) => {
     State.tasksSort = e.target.value;
     State.tasksPage = 1;
+    loadTasks();
+  });
+
+  // Priority filter
+  document.getElementById('filter-priority')?.addEventListener('change', (e) => {
+    State.tasksPriority = e.target.value;
+    State.tasksPage     = 1;
     loadTasks();
   });
 
